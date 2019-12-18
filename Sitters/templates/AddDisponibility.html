@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Ajouter une disponibilité</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      {% if SessionUser.Status != "Sitter" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+    <nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Ajouter une disponibilité</li>
+	  </ol>
+	</nav>
+    <form method="get" action="/AddDisponibility">
+    	<p>Je serai disponible le <input type="text" name="Day" placeholder="jour"/> du <input type="text" name="Month" placeholder="mois" /> <input type="text" name="Year" placeholder="année" />.</p>
+    	<hr>
+    	<p>Nombre d'enfants maximal (optionel): <input type="text" name="ChildMax" placeholder="Max."/>.</p>
+    	<p>Je ne suis disponible que dans une seule ville (optionel): <input type="text" name="City" placeholder="Ville"/>.</p>
+    	<p><input type="submit" value="Ajouter" class="btn btn-primary"/></p>
+    </form>
+    {% if Error %}
+    	<p style="color: red;">{{ Error }}</p>
+    {% endif %}
+</div>
+</body>
+</html>

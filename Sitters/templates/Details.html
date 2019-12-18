@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Détails de votre réservation</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      {% if SessionUser.Status != "Sitter" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+	<nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Votre réservation</li>
+	  </ol>
+	</nav>
+	<div class="card">
+		<div class="card-header">
+			Informations sur votre réservation
+		</div>
+		<div class="card-body">
+			<b>Date:</b> {{ Reservation.Date }}<br/>
+			<b>Baby-sitter:</b> {{ Sitter.Firstname }} {{ Sitter.Lastname }}<br/>
+			<b>Parent:</b> {{ Parent.Firstname }} {{ Parent.Lastname }}<br/>
+			<b>Adresse:</b> {{ Parent.City|safe }} - {{ Parent.Street|safe }}<br/>
+			<hr>
+			<b>Horaire:</b> De {{ Reservation.Start }} à {{ Reservation.End }}h<br/>
+			<b>Durée:</b> {{ Reservation.Duration }}h<br/>
+			<b>Tarif:</b> {{ Reservation.Price }}€ par heure<br/>
+		</div>
+	</div><br/>
+	<div class="card">
+		<div class="card-header">
+			Baby-Sitter
+		</div>
+		<div class="card-body">
+			<b>Nom:</b> <a href="/Profile?Id={{Sitter.pk}}">{{ Sitter.Firstname }} {{ Sitter.Lastname }}</a><br/>
+			<b>Age:</b> {{ Sitter.Age }}<br/>
+			<b>Note:</b> 4/5<br/>
+			<hr>
+			<b>Biographie:</b><br/>{{ Sitter.Infos|safe }}
+		</div>
+	</div>
+	<br/>
+	<div class="card">
+		<div class="card-header">
+			Parent
+		</div>
+		<div class="card-body">
+			<b>Nom:</b> <a href="/Profile?Id={{Parent.pk}}">{{ Parent.Firstname }} {{ Parent.Lastname }}</a><br/>
+			<b>Adresse:</b> {{ Parent.City|safe }} - {{ Parent.Street|safe }}<br/>
+			<b>Nombre d'enfants:</b> 2
+			<hr>
+			<b>Biographie:</b><br/>{{ Parent.Infos|safe }}
+		</div>
+	</div><br/>
+	{% if IsParent and not IsCommented %}
+		<div class="card">
+			<div class="card-header">
+				Laisser un commentaire
+			</div>
+			<div class="card-body">
+				<p>Vous désirez laisser une note et un commentaire à {{ Sitter.Firstname }} ?</p>
+				<hr>
+				<form method="get" action="/Comment">
+					<p><b>J'attribue à {{ Sitter.Firstname }} une note de:</b></p>
+					<div class="row">
+						<div class="col" style="text-align: center;">
+							<input type="radio" name="Note" value="1" checked="checked"> Une étoile</input>
+						</div>
+						<div class="col" style="text-align: center;">
+							<input type="radio" name="Note" value="2"> Deux étoiles</input>
+						</div>
+						<div class="col" style="text-align: center;">
+							<input type="radio" name="Note" value="3"> Trois étoiles</input>
+						</div>
+						<div class="col" style="text-align: center;">
+							<input type="radio" name="Note" value="4"> Quatres étoiles</input>
+						</div>
+						<div class="col" style="text-align: center;">
+							<input type="radio" name="Note" value="5"> Cinq étoiles</input>
+						</div>
+					</div>
+					<br/>
+					<input type="hidden" name="Sitter" value="{{ Sitter.pk }}" />
+					<input type="hidden" name="Parent" value="{{ Parent.pk }}" />
+					<input type="hidden" name="Reservation" value="{{ Reservation.pk }}" />
+					<label for="Comment"><b>Mon commentaire:</b></label>
+					<textarea class="form-control" rows="8" name="Comment" id="Comment"></textarea>
+					<br/>
+					<input type="submit" class="btn btn-primary form-control" value="Envoyer !" />
+				</form>
+			</div>
+		</div>
+		<br/><br/>
+		{% if Error %}
+			<div class="alert alert-danger">
+				{{ Error }}
+			</div>
+		{% endif %}
+		{% elif not IsParent and IsCommented %}
+		<div class="card">
+				<div class="card-header">
+				Commentaires
+			</div>
+			<div class="card-body">
+				<p><b>Note attribuée: </b>{{ Comment.Note }}</p>
+				<p><b>Commentaire de {{ Parent.Firstname }}: </b><br/>{{ Comment.Comment }}</p>
+				<hr>
+				{% if IsAnswered %}
+					<p style="margin-left: 2%;"><b>Réponse de {{ Sitter.Firstname }}: </b><br/>{{ Answer.Comment|safe }}</p>
+				{% else %}
+				<form method="get" action="/Answer">
+					<label for="Answer"><b>Répondre à {{ Parent.Firstname }}:</b></label>
+					<textarea class="form-control" rows="3" name="Answer" id="Answer" ></textarea>
+					<input type="hidden" name="Related" value="{{Comment.pk}}" />
+					<br/>
+					<input type="submit" class="btn btn-primary form-control" value="Répondre !" />
+				</form>
+				{% endif %}
+			</div>
+		</div>
+		<br/><br/>
+		{% else %}
+			{% if IsCommented %}
+			<div class="card">
+				<div class="card-header">
+					Commentaires
+				</div>
+				<div class="card-body">
+					<p><b>Note attribuée: </b>{{ Comment.Note }}</p>
+					<p><b>Commentaire de {{ Parent.Firstname }}: </b><br/>{{ Comment.Comment }}</p>
+					{% if IsAnswered %}
+						<hr>
+						<p style="margin-left: 2%;"><b>Réponse de {{ Sitter.Firstname }}: </b><br/>{{ Answer.Comment|safe }}</p>
+					{% endif %}
+				</div>
+			</div>
+			<br/><br/>
+			{% endif %}
+	{% endif %}
+</div>
+</body>
+</html>

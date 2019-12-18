@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Chercher un baby-sitter</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      <li class="nav-item active">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+    <nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Rechercher un baby-sitter</li>
+	  </ol>
+	</nav>
+	<div class="card">
+		<div class="card-header">
+			Recherche
+		</div>
+		<div class="card-body">
+		    <form method="get" action="/Search">
+		    	<p>Je cherche un baby-sitter pour le <input type="text" name="Day" placeholder="jour"/> du <input type="text" name="Month" placeholder="mois" /> <input type="text" name="Year" placeholder="année" />.</p>
+		    	<p>Tarif horaire maximal (optionel): <input type="text" name="Max" placeholder="Max."/>.</p>
+		    	<p>Nombre d'enfants (optionel): <input type="text" name="ChildMax" placeholder="Max."/>.</p>
+		    	<p>Ville (optionel): <input type="text" name="City" placeholder="Ville de recherche"/>.</p>
+		    	<p><input type="submit" value="Chercher" class="btn btn-primary"/></p>
+		    </form>
+		</div>
+	</div><br/>
+    {% if Results %}
+    	<div class="card">
+    		<div class="card-header">
+    			Résultats de votre recherche
+    		</div>
+    		<div class="card-body">
+		    {% for Item in Results %}
+		    	<div class="card">
+		    		<div class="card-body">
+			    		<h4>{{ Item.Name }}, <i>{{ Item.Age }} ans - <i>{{ Item.Price }}</i> €/h</i></h4>
+			    		<p>Disponible le: {{ Item.Date }}</p>
+		   				<h6 class="card-subtitle mb-2 text-muted"><small>Note: {{ Item.Note }}</small></h6>
+			    		{% if Item.ChildMax %}
+				    		<h6 class="card-subtitle mb-2 text-muted" style="color: red !important;"><small>Pour {{ Item.ChildMax }} enfants maximum</small></h6>
+				    	{% endif %}
+			    		{% if Item.City %}
+				    		<h6 class="card-subtitle mb-2 text-muted" style="color: red !important;"><small>À {{ Item.City }} uniquement.</small></h6>
+				    	{% endif %}
+			    		<i>{{ Item.Infos }}</i>
+			    		<br/><br/>
+			    		<form method="get" action="/Reserve">
+			    			<input type="text" hidden="true" name="Id" value="{{ Item.pk }}" />
+			    			<small>Je réserve de <input type="text" name="Start" placeholder="Heure de départ"/> h à <input type="text" name="End" placeholder="Heure de fin"/> h.</small><br/><br/>
+			    			<input type="submit" value="Réserver !" class="btn btn-primary"/>
+			    		</form>
+		    		</div>
+		    	</div><br/>
+		    {% endfor %}
+    		</div>
+    	</div>
+    {% endif %}
+    {% if Error %}
+    	<p style="color: red;">{{ Error }}</p>
+    {% endif %}
+</div>
+</body>
+</html>

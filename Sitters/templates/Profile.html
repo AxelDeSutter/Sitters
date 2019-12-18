@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Profil de {{ User.Firstname }}</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      {% if SessionUser.pk == User.pk %}
+      <li class="nav-item active">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% endif %}
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      {% if SessionUser.Status != "Sitter" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+	<nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Profil de {{ User.Firstname }} {{ User.Lastname }}</li>
+	  </ol>
+	</nav>
+	{% if User.Status == "Parent" %}
+	<div class="card" style="width: 100%;">
+	  <div class="card-header">
+	  	Informations
+	  	<div style="float: right;">
+	  		<a href="/Chat?User={{User.pk}}">Envoyer un message privé </a>&nbsp;
+	  		<img src="https://eu.ui-avatars.com/api/?name={{User.Firstname}}+{{User.Lastname}}&size=128&background=007bff&color=FFF" style="float: right;border-radius: 5px;" width=25px" height="25px" />
+	  	</div>
+	  </div>
+	  <div class="card-body">  
+	  	<div style="float: right">
+	  	{% if SessionUser.pk != User.pk %}
+    		<a href="/Report?User={{User.pk}}" class="btn btn-danger btn-sm" style="float: right; margin: 5px;">Signaler</a>
+    	{% endif %}
+    	</div>
+	    <h5 class="card-title"> {{ User.Firstname }} {{ User.Lastname }}</h5>
+	    <h6 class="card-subtitle mb-2 text-muted">{{ User.City }}</h6>
+	    <p class="card-text">{{ User.Infos|safe }}</p>
+	    <b>Enfants:</b>
+	    <ul>
+	    	{% for Child in Childs %}
+	    		<li>{{ Child.Name }} <i><small>({{ Child.Age }}ans)</small></i></li>
+	    	{% endfor %}
+	    </ul>
+	  </div>
+	</div>
+	    {% if Reservations %}
+	    	<br/>
+	    	<div class="card">
+	    	<div class="card-header">
+	    		Mes réservations
+	    	</div>
+	    	<div class="card-body" style="display: inline-block;">
+	    	  {% for Reservation in Reservations %}
+	    		<div class="card" style="width: 18rem; display: inline-block; margin: 10px;">
+				  <div class="card-body">
+				    <h5 class="card-title">{{ Reservation.Name }}</h5>
+				    <h6 class="card-subtitle mb-2 text-muted">{{ Reservation.Date }}</h6>
+				    <p class="card-text">{{ Reservation.Infos|safe }}</p>
+				    <a href="/Cancel?Id={{Reservation.pk}}" class="card-link" style="color: red;">Annuler</a>
+				    <a href="/Details?Id={{Reservation.pk}}" class="card-link">Détails</a>
+				  </div>
+				</div>
+	    	{% endfor %}
+	    	</div>
+	    	</div>
+	    	<br/>
+	    {% endif %}
+	    <br/>
+	    {% if UpComing %}
+	    	<h3>À venir:</h3>
+	    	{% for Coming in UpComing %}
+	    		 
+	    	{% endfor %}
+	    {% endif %}
+	{% elif User.Status == "Both" %}
+		<div class="card" style="width: 100%;">
+		  <div class="card-header">
+		  	Informations
+		  	<div style="float: right;">
+		  		<a href="/Chat?User={{User.pk}}">Envoyer un message privé </a>&nbsp;
+		  		<img src="https://eu.ui-avatars.com/api/?name={{User.Firstname}}+{{User.Lastname}}&size=128&background=007bff&color=FFF" style="float: right;border-radius: 5px;" width=25px" height="25px" />
+		  	</div>
+		  </div>
+		  <div class="card-body">
+		  	<div style="float: right">
+		  	{% if SessionUser.pk != User.pk %}
+			  	{% if IsFavorite %}
+			  		<a href="/Favorite?User={{User.pk}}" class="btn btn-danger btn-sm">Retirer des favoris</a>
+			  	{% else %}
+			  		<a href="/Favorite?User={{User.pk}}" class="btn btn-info btn-sm">&#x2764; Ajouter aux favoris</a>
+			  	{% endif %}
+			  	<br/>
+	    		<a href="/Report?User={{User.pk}}" class="btn btn-danger btn-sm" style="float: right; margin: 5px;">Signaler</a>
+	    	{% endif %}
+	    	</div>
+		    <h5 class="card-title">{{ User.Firstname }} {{ User.Lastname }}</h5>
+		    <h6 class="card-subtitle mb-2 text-muted">{{ User.City }}</h6>
+		    <p class="card-text"><b>Note:</b> {{ Note }}</p>
+		    <p class="card-text">{{ User.Infos|safe }}</p>
+		    <b>Enfants:</b>
+		    <ul>
+		    	{% for Child in Childs %}
+		    		<li>{{ Child.Name }} <i><small>({{ Child.Age }}ans)</small></i></li>
+		    	{% endfor %}
+		    </ul>
+		  </div>
+		</div>
+		{% if Reservations %} 
+			<br />
+	    	<div class="card" style="width: 100%;">
+			  <div class="card-header">
+			  	Réservations
+			  </div>
+			  <div class="card-body" style="display: inline-block;">
+	    	{% for Reservation in Reservations %}
+	    		<div class="card" style="width: 18rem; display: inline-block; margin: 10px;">
+				  <div class="card-body">
+				    <h5 class="card-title">{{ Reservation.Name }}</h5>
+				    <h6 class="card-subtitle mb-2 text-muted">{{ Reservation.Date }}</h6>
+				    <p class="card-text">{{ Reservation.Infos|safe }}</p>
+				    <a href="/CancelReservation?Id={{Reservation.pk}}" class="card-link" style="color: red;">Annuler</a>
+				    <a href="/Details?Id={{Reservation.pk}}" class="card-link">Détails</a>
+				  </div>
+				</div>
+	    	{% endfor %}
+			  </div>
+			</div>
+	    {% endif %}
+	    {% if UpComing %}
+	    <br/>
+	    	<div class="card" style="width: 100%;">
+			  <div class="card-header">
+			  	Baby-sitting à venir
+			  </div>
+			  <div class="card-body" style="display: inline-block;">
+	    	{% for Reservation in UpComing %}
+	    		<div class="card" style="width: 18rem; display: inline-block; margin: 10px;">
+				  <div class="card-body">
+				    <h5 class="card-title">{{ Reservation.Name }}</h5>
+				    <h6 class="card-subtitle mb-2 text-muted">{{ Reservation.Date }}</h6>
+				    <p class="card-text">{{ Reservation.Infos|safe }}</p>
+				    <a href="/Cancel?Id={{Reservation.pk}}" class="card-link" style="color: red;">Annuler</a>
+				    <a href="/Details?Id={{Reservation.pk}}" class="card-link">Détails</a>
+				  </div>
+				</div>
+	    	{% endfor %}
+			  </div>
+			</div>
+	    {% endif %}
+	    <br/><br/>
+	{% else %}
+		<div class="card" style="width: 100%;">
+		  <div class="card-header">
+		  	Informations
+		  	<div style="float: right;">
+		  		<a href="/Chat?User={{User.pk}}">Envoyer un message privé </a>&nbsp;
+		  		<img src="https://eu.ui-avatars.com/api/?name={{User.Firstname}}+{{User.Lastname}}&size=128&background=007bff&color=FFF" style="float: right;border-radius: 5px;" width=25px" height="25px" />
+		  	</div>
+		  </div>
+		  <div class="card-body">
+		  	<div style="float: right">
+		  	{% if SessionUser.pk != User.pk %}
+			  	{% if IsFavorite %}
+			  		<a href="/Favorite?User={{User.pk}}" class="btn btn-danger btn-sm">Retirer des favoris</a>
+			  	{% else %}
+			  		<a href="/Favorite?User={{User.pk}}" class="btn btn-info btn-sm">&#x2764; Ajouter aux favoris</a>
+			  	{% endif %}
+			  	<br/>
+	    		<a href="/Report?User={{User.pk}}" class="btn btn-danger btn-sm" style="float: right; margin: 5px;">Signaler</a>
+	    	{% endif %}
+	    	</div>
+		    <h5 class="card-title">{{ User.Firstname }} {{ User.Lastname }}</h5>
+		    <h6 class="card-subtitle mb-2 text-muted">{{ User.City }}</h6>
+		    <p class="card-text">{{ User.Infos|safe }}</p>
+		    <p class="card-text">Note: {{ Note }}</p>
+		  </div>
+		</div>
+   	    {% if Reservations %}
+	    	<div class="card" style="width: 100%;">
+			  <div class="card-header">
+			  	Réservations
+			  </div>
+			  <div class="card-body">
+	    	{{% for Reservation in UpComing %}
+	    		<div class="card" style="width: 18rem; display: inline-block; margin: 10px;">
+				  <div class="card-body">
+				    <h5 class="card-title">{{ Reservation.Name }}</h5>
+				    <h6 class="card-subtitle mb-2 text-muted">{{ Reservation.Date }}</h6>
+				    <p class="card-text">{{ Reservation.Infos|safe }}</p>
+				    <a href="/Cancel?Id={{Reservation.pk}}" class="card-link" style="color: red;">Annuler</a>
+				    <a href="/Details?Id={{Reservation.pk}}" class="card-link">Détails</a>
+				  </div>
+				</div>
+	    	{% endfor %}
+			  </div>
+			</div>
+	    {% endif %}
+	    {% if UpComing %}
+	    <br/>
+	    	<div class="card" style="width: 100%;">
+			  <div class="card-header">
+			  	Baby-sitting à venir
+			  </div>
+			  <div class="card-body" style="display: inline-block;">
+	    	{% for Reservation in UpComing %}
+	    		<div class="card" style="width: 18rem; display: inline-block; margin: 10px;">
+				  <div class="card-body">
+				    <h5 class="card-title">{{ Reservation.Name }}</h5>
+				    <h6 class="card-subtitle mb-2 text-muted">{{ Reservation.Date }}</h6>
+				    <p class="card-text">{{ Reservation.Infos|safe }}</p>
+				    <a href="/Cancel?Id={{Reservation.pk}}" class="card-link" style="color: red;">Annuler</a>
+				    <a href="/Details?Id={{Reservation.pk}}" class="card-link">Détails</a>
+				  </div>
+				</div>
+	    	{% endfor %}
+			  </div>
+			</div>
+	    {% endif %}
+	    </div>
+	{% endif %}
+</div>
+</body>
+</html>

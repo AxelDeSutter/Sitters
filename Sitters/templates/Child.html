@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Informations complémentaires</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{Session.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+	<nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Inscription d'un enfant</li>
+	  </ol>
+	</nav>
+	<div class="card">
+		<div class="card-header">
+			Remplissez le formulaire
+		</div>
+		<div class="card-body">
+			{% if Error %}
+				<div class="alert alert-danger">
+					{{ Error }}
+				</div>
+			{% endif %}
+			{% if Success %}
+				<div class="alert alert-success">
+					{{ Success }}
+				</div>
+			{% endif %}
+			Vous avez déjà enregistré:
+			<ul>
+			{% for Child in Childs %}
+				<li>{{ Child.Name }} <i><small>({{ Child.Age }}ans)</small></i></li>
+			{% endfor %}
+			</ul>
+			<hr>
+			<form method="get" action="/Child">
+				<label for="Name">Nom de l'enfant:</label>
+				<input type="text" name="Name" id="Name" class="form-control"/><br/>
+				<label for="Age">Âge de l'enfant:</label>
+				<input type="text" name="Age" id="Age" class="form-control"/>
+				<input type="hidden" name="Parent" value="{{Parent}}"/><br/>
+				<label for="Sex">Sexe de l'enfant:</label>
+				<select class="form-control" name="Sex" id="Sex">
+					<option value="F">Fille</option>
+					<option value="M">Garçon</option>
+					<option value="X">Non-binaire</option>
+				</select>
+				<br/>
+				<label for="Infos">Informations supplémentaires:</label>
+				<textarea class="form-control" name="Infos" id="Infos" rows="8"></textarea>
+				<br/>
+				<input type="submit" value="Enregistrer" class="form-control btn btn-primary"/>
+			</form>
+		</div>
+	</div>
+	<br/>
+</div>
+</body>
+</html>

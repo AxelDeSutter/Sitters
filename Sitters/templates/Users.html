@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Chercher un utilisateur</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+	<nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Rechercher un utilisateur</li>
+	  </ol>
+	</nav>
+    <form method="get" action="/Users">
+    	<p><input type="text" name="User" placeholder="Prénom, Nom de famille" class="form-control"/></p>
+    	<p><input type="submit" value="Chercher" class="form-control btn btn-primary"/></p>
+    </form>
+    <br/>
+    {% if Results %}
+    	<h3>Résultats de votre recherche:</h3>
+    	<br/>
+    	<div style="display: inline-block;">
+	    {% for Item in Results %}
+	    	<div class="card" style="width: 15rem; display: inline-block; vertical-align: top; margin: 15px;">
+	    		<div class="card-body">
+	    			<h5 class="card-title">{{ Item.Firstname }} {{ Item.Lastname }}</h5>
+	    			{% if Item.Status != "Sitter" %}
+				    	<h6 class="card-subtitle mb-2 text-muted">{{ Item.City }}</h6>
+	    			{% else %}
+				    	<h6 class="card-subtitle mb-2 text-muted">{{ Item.Age }} ans</h6>
+	    			{% endif %}
+	    			{% if Item.Status != "Parent" %}
+	    				<h6 class="card-subtitle mb-2 text-muted"><small>Note: {{ Note }}</small></h6>
+	    			{% endif %}
+				    <p class="card-text">{{ Item.Infos }}</p>
+				    <a href="/Profile?Id={{Item.pk}}">Visiter le profil</a>
+	    		</div>
+	    	</div>
+	    {% endfor %}
+	    </div>
+    {% endif %}
+    {% if Error %}
+    	<p style="color: red;">{{ Error }}</p>
+    {% endif %}
+</div>
+</body>
+</html>

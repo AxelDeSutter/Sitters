@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Accueil</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Accueil <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      {% if SessionUser.Status != "Sitter" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+    <nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Bienvenue sur Sitters</li>
+	  </ol>
+	</nav>
+	
+	{% if Messages %}
+    	{% for Message in Messages %}
+    		{% if Message.Type == "Success" %}
+    		<div class="alert alert-success" role="alert">
+			  <b>Vous avez un nouveau message !</b>
+			  <br />
+			  {{ Message.Content }}
+			  <br/>
+			  <hr>
+			  <a href="/Profile?Id={{SessionUser.pk}}" class="btn btn-success">Cliquez ici pour plus d'informations !</a>
+			  <a href="/DeleteMessage?Id={{Message.pk}}" class="btn btn-success" style="float: right;">Marquer comme lu</a>
+			</div>
+    		{% else %}
+   		   <div class="alert alert-danger" role="alert">
+			  <b>Vous avez un nouveau message !</b>
+			  <br />
+			  {{ Message.Content }}
+			  <br/>
+			  <hr>
+			  <a href="/Profile?Id={{SessionUser.pk}}" class="btn btn-danger">Cliquez ici pour voir vos réservations !</a>
+			  <a href="/DeleteMessage?Id={{Message.pk}}" class="btn btn-danger" style="float: right;">Marquer comme lu</a>
+			</div>
+    		{% endif %}
+    	{% endfor %}
+    {% endif %}
+	<div class="row">
+	  <div class="col-sm-8">
+	  	<div class="card">
+		  <div class="card-header">
+		     Tableau de bord
+		  </div>
+		  <div class="card-body">
+		  {% if Profit >= 0 %}
+		  	Votre profit actuel est de: <span style="color: green;">{{ Profit }}€</span>
+		  {% else %}
+		  	Votre dette actuelle est de: <span style="color: red;">{{ Profit }}€</span>
+		  {% endif %}
+		    {% if Disponibilities %}
+		    <hr>
+	    	<h5 style="margin-bottom: 15px; text-align: center;">Vous êtes disponibles aux dates suivantes:</h5>
+		    {% for Item in Disponibilities %}
+		    	<div class="card" style="width: 100%; margin-bottom:15px; ">
+		    		<div class="card-body">
+			    		<h5 class="card-title">{{ Item.Date }}</h5>
+			    		{% if Item.ChildMax %}
+				    		<h6 class="card-subtitle mb-2 text-muted"><small>Pour {{ Item.ChildMax }} enfants maximum</small></h6>
+				    	{% endif %}
+			    		{% if Item.City %}
+				    		<h6 class="card-subtitle mb-2 text-muted"><small>Uniquement à {{ Item.City  }}</small></h6>
+				    	{% endif %}
+			    		<a href="/DeleteDisponibility?Id={{Item.pk}}" class="btn btn-info btn-sm form-control">Supprimer cette disponibilité</a>
+		    		</div>
+		    	</div>
+		    {% endfor %}
+	    {% endif %}
+	    	{% if FavoriteDisponibilities|length > 0 %}
+		    <hr>
+		    <h5 style="margin-bottom: 15px; text-align: center;">Vos favoris sont disponibles:</h5>
+		    {% for Item in FavoriteDisponibilities %} 
+		    	<div class="card" style="width: 100%; margin-bottom: 10px;">
+		    		<div class="card-body">
+			    		<h5 class="card-title"><a href="/Profile?Id={{Item.UserId}}">{{ Item.Name }}</a></h5>
+				    	<h6 class="card-subtitle mb-2 text-muted">Le {{ Item.Date }}</h6>
+				    	<hr>
+				    	<form method="get" action="/Reserve">
+			    			<input type="text" hidden="true" name="Id" value="{{ Item.pk }}" />
+			    			<small>Je réserve de <input type="text" name="Start" placeholder="Heure de départ"/> h à <input type="text" name="End" placeholder="Heure de fin"/> h.</small>
+			    			<br/><br/>
+			    			<input type="submit" value="Réserver !" class="btn btn-info btn-sm form-control"/>
+			    		</form>
+		    		</div>
+		    	</div>
+		    {% endfor %}
+		    {% endif %}
+		  </div>
+		</div>
+	  </div>
+	  <div class="col-sm-4">
+	  	<div class="card">
+		  <div class="card-header">
+		    Liens utiles
+		  </div>
+		  <div class="card-body">
+		  	{% if SessionUser.Status != "Parent" %}
+		    	<a href="/SitterInfos">Modifier mes informations</a><br/>
+		    {% endif %}
+		    <a href="/Users">Rechercher un utilisateur</a><br/>
+		    {% if SessionUser.Status != "Sitter" %}
+		    	<a href="/Child">Enregistrer un enfant</a><br/>
+		    {% endif %}
+		  	{% if SessionUser.Admin %}
+		    	<a href="/Reports" style="color: red;">Voir les signalements</a><br/>
+		    {% endif %}
+		  </div>
+		</div>
+		<br/>
+		{% if Chats|length > 0 %}
+		<div class="card">
+		  <div class="card-header">
+		    Messagerie
+		  </div>
+		  <div class="card-body">
+		  	{% for Chat in Chats %}
+	    		<a href="/Chat?User={{Chat.pk}}">{{ Chat.Firstname }} {{ Chat.Lastname }}</a><br/>
+	    	{% endfor %}
+		  </div>
+		</div>
+		{% endif %}
+	  </div>
+	</div>
+</div>
+</body>
+</html>

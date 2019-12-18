@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Chat</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{Sender.pk}}">Mon Profil</a>
+      </li>
+      {% if Sender.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      {% if Sender.Status != "Sitter" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+    <nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Chattez avec {{ Receiver.Firstname }}</li>
+	  </ol>
+	</nav>
+	<div class="card">
+		<div class="card-header">
+			{{ Receiver.Firstname }} {{ Receiver.Lastname }}
+		</div>
+		<div class="card-body">
+			<div style="max-height: 300px; overflow-y: auto;" id="ChatBox">
+			{% for Chat in Chats %}
+				{% if Sender.pk == Chat.Sender %}
+				<div class="card" style="float: right; padding: 10px; max-width: 70%; background-color: #007BFF; color: #FFF;">
+					{{ Chat.Content|safe }}
+				</div><br/><br/>
+				{% else %}
+				<div class="card" style="padding: 10px; max-width: 70%; margin-bottom: 10px; display: inline-block;">
+					{{ Chat.Content|safe }}
+				</div><br/>
+				{% endif %}
+			{% endfor %}
+			</div>
+			<hr>
+			<form method="get" action="/Send">
+				<input type="text" placeholder="Votre message" class="form-control" name="Content"/><br/>
+				<input type="hidden" name="Sender" value="{{Sender.pk}}" />
+				<input type="hidden" name="Receiver" value="{{Receiver.pk}}" />
+				<input type="submit" value="Envoyer !" class="btn btn-primary form-control" />
+			</form>
+		</div>
+	</div>
+	
+	
+</div>
+<script>
+var element = document.getElementById("ChatBox");
+element.scrollTop = element.scrollHeight;
+</script>
+</body>
+</html>

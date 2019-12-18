@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Home</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+<br/>
+<div class="container">
+	<nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Inscription</li>
+	  </ol>
+	</nav>
+    <p>Inscrivez-vous pour commencer à utiliser la plateforme.</p>
+    <form method="get" action="/Register">
+    	<input type="text" name="Firstname" placeholder="Prénom" class="form-control"/></p>
+    	<input type="text" name="Lastname" placeholder="Nom de famille" class="form-control"/></p>
+    	<input type="email" name="Email" placeholder="Adresse e-mail" class="form-control"/></p>
+    	<input type="password" name="PasswordOne" placeholder="Mot de passe" class="form-control"/></p>
+    	<input type="password" name="PasswordTwo" placeholder="Confirmer le mot de passe" class="form-control"/></p>
+    	<input type="text" name="City" placeholder="Ville" class="form-control"/></p>
+    	<input type="text" name="Street" placeholder="Rue" class="form-control"/></p>
+    	<textarea name="Infos" placeholder="Informations complémentaires" rows="4" class="form-control"></textarea></p>
+   		<select name="Status" class="form-control">
+   			<option value="Parent">Je suis un parent</option>
+   			<option value="Sitter">Je suis un baby-sitter</option>
+   			<option value="Both">Les deux</option>
+   		</select><br/>
+    	<input type="submit" value="Créer mon compte !" class="btn btn-primary"/>
+    </form><br/>
+    <p>Vous avez déjà un compte ? <a href="/Login">Connectez-vous !</a></p>
+    {% if Error %}
+    	<p style="color: red;">{{ Error }}</p>
+    {% endif %}
+</div>
+</body>
+</html>

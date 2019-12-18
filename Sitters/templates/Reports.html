@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Accueil</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Accueil <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Profile?Id={{SessionUser.pk}}">Mon Profil</a>
+      </li>
+      {% if SessionUser.Status != "Parent" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/AddDisponibility">Ajouter</a>
+      </li>
+      {% endif %}
+      {% if SessionUser.Status != "Sitter" %}
+      <li class="nav-item">
+        <a class="nav-link" href="/Search">Rechercher</a>
+      </li>
+      {% endif %}
+    </ul>
+    <span class="navbar-text">
+      <a href="/Logout" style="color: red; text-decoration: none;">Déconnexion</a>
+    </span>
+  </div>
+</nav>
+<br/>
+<div class="container">
+    <nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Bienvenue sur Sitters</li>
+	  </ol>
+	</nav>
+	<div class="card">
+		<div class="card-header">
+			Tous les signalements
+		</div>
+		<div class="card-body">
+			{% for Item in Items %}
+				<div class="card" style="width: 100%; margin-bottom: 10px">
+					<div class="card-body">
+		    			<h5 class="card-title"><a href="/Profile?Id={{Item.Reported}}">{{ Item.Name }}</a></h5>
+			    		<h6 class="card-subtitle mb-2 text-muted">{{ Item.Comment|safe }}</h6>
+			    		<h6 class="card-subtitle mb-2 text-muted"><small><i>Signalé le {{ Item.Date|date:'Y-m-d à H:i' }} par {{ Item.ByUser|safe }}</i></small></h6> 
+			    		<hr>
+			    		<a href="/Ban?User={{Item.Reported}}" class="btn btn-sm btn-danger form-control">Bannir {{ Item.Name }}</a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+</body>
+</html>

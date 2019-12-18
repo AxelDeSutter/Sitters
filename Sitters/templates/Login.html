@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Sitters - Connexion</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/">
+    <img src="https://skyfight.be/Sitters.png" height="35" style="border-radius: 5px;" alt="">
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+</nav>
+<br/>
+<div class="container">
+	<nav aria-label="breadcrumb">
+	  <ol class="breadcrumb">
+	    <li class="breadcrumb-item"><a href="#">Sitters</a></li>
+	    <li class="breadcrumb-item active" aria-current="page">Connexion</li>
+	  </ol>
+	</nav>
+    <form method="get" action="/Login">
+    	<p><input type="email" name="Email" placeholder="Adresse e-mail" class="form-control"/></p>
+    	<p><input type="password" name="Password" placeholder="Mot de passe" class="form-control"/></p>
+    	<p><input type="submit" value="Connexion" class="btn btn-primary " /></p>
+    </form>
+    <p>Pas encore insrit ? <a href="/Register">Inscrivez-vous !</a></p>
+    {% if Error %}
+    	<p style="color: red;">{{ Error|safe }}</p>
+    {% endif %}
+</div>
+</body>
+</html>
