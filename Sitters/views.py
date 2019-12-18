@@ -8,7 +8,6 @@ from django.shortcuts import render, redirect
 from django.utils.html import escape
 
 from Sitters.models import User, Disponibilities, Message, Comment, Child, Favorite, Chat, Report
-from django.contrib.sessions.models import Session
 
 def Home(request):
     if "User" in request.session:
